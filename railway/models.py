@@ -1,4 +1,8 @@
+import os
+import uuid
+
 from django.db import models
+from django.utils.text import slugify
 
 
 class Crew(models.Model):
@@ -25,6 +29,13 @@ class TrainType(models.Model):
         return self.name
 
 
+def train_image_file_path(instance, filename):
+    _, extension = os.path.splitext(filename)
+    filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
+
+    return os.path.join("uploads/trains/", filename)
+
+
 class Train(models.Model):
     name = models.CharField(max_length=255)
     cargo_num = models.IntegerField()
@@ -33,6 +44,10 @@ class Train(models.Model):
         TrainType,
         on_delete=models.CASCADE,
         related_name="trains"
+    )
+    image = models.ImageField(
+        null=True,
+        upload_to=train_image_file_path
     )
 
     def __str__(self):
