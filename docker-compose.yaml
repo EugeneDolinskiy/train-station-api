@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: .
+      context: railway
     env_file:
       - .env
     ports:
