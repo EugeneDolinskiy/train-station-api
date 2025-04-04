@@ -69,3 +69,15 @@ class Route(models.Model):
 
     def __str__(self):
         return f"{self.source.name} -> {self.destination.name} ({round(self.distance, 2)})"
+
+
+class Order(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name="orders"
+    )
+
+    def __str__(self):
+        return self.created_at.strftime('%Y-%m-%d %H:%M')
