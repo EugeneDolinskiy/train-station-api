@@ -1,8 +1,11 @@
 import os
 import uuid
 
+from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
+from rest_framework.exceptions import ValidationError
 
 
 class Crew(models.Model):
@@ -81,3 +84,29 @@ class Order(models.Model):
 
     def __str__(self):
         return self.created_at.strftime('%Y-%m-%d %H:%M')
+
+
+class Journey(models.Model):
+    route = models.ForeignKey(
+        Route,
+        on_delete=models.CASCADE,
+        related_name="journeys"
+    )
+    train = models.ForeignKey(
+        Train,
+        on_delete=models.CASCADE,
+        related_name="journeys"
+    )
+    departure_time = models.DateTimeField()
+    arrival_time = models.DateTimeField()
+
+    def clean(self):
+        if self.arrival_time <= self.departure_time:
+            raise ValidationError("Arrival time must be after departure time.")
+
+    def __str__(self):
+        return (
+            f"{self.route.source.name} -> {self.route.destination.name} | "
+            f"{self.train.name} | {self.departure_time.strftime('%Y-%m-%d %H:%M')} "
+            f"– {self.arrival_time.strftime('%Y-%m-%d %H:%M')}"
+        )
