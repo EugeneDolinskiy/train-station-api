@@ -102,3 +102,22 @@ class JourneyViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.select_related("train", "route")
 
+
+class TicketViewSet(viewsets.ModelViewSet):
+    queryset = Ticket.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return TicketListSerializer
+        elif self.action == "retrieve":
+            return TicketDetailSerializer
+
+        return TicketSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        if self.action == "list":
+            return queryset.prefetch_related("journey__route", "order")
+
+        return queryset
