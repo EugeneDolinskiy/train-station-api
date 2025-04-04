@@ -22,7 +22,7 @@ from drf_spectacular.views import SpectacularSwaggerView, SpectacularRedocView, 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/train-station/", include("train_station.urls", namespace="train_station")),
+    path("api/railway/", include("railway.urls", namespace="railway")),
     path("api/user/", include("user.urls", namespace="user")),
     path(
         "api/schema/",
