@@ -1,9 +1,9 @@
 from rest_framework import serializers
-
-from railway.models import Crew, Station, TrainType, Train, Route
+from railway.models import Crew, Station, TrainType, Train, Route, Order, Journey, Ticket
 
 
 class CrewSerializer(serializers.ModelSerializer):
+    # Замість 'route' потрібно вказати 'journeys', щоб показати всі поїздки
     journeys = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -41,6 +41,8 @@ class TrainTypeSerializer(serializers.ModelSerializer):
 
 
 class TrainSerializer(serializers.ModelSerializer):
+    train_type = TrainTypeSerializer(many=True, read_only=True)
+
     class Meta:
         model = Train
         fields = (
@@ -54,8 +56,6 @@ class TrainSerializer(serializers.ModelSerializer):
 
 
 class TrainListSerializer(TrainSerializer):
-    train_type = TrainTypeSerializer(many=True, read_only=True)
-
     class Meta:
         model = Train
         fields = (
@@ -67,8 +67,6 @@ class TrainListSerializer(TrainSerializer):
 
 
 class TrainDetailSerializer(TrainSerializer):
-    train_type = TrainTypeSerializer(many=True, read_only=True)
-
     class Meta:
         model = Train
         fields = (
@@ -84,19 +82,15 @@ class TrainDetailSerializer(TrainSerializer):
 class TrainImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Train
-        field = (
+        fields = (
             "id",
             "image"
         )
 
 
 class RouteSerializer(serializers.ModelSerializer):
-    source = serializers.StringRelatedField(
-        queryset=Station.objects.all()
-    )
-    destination = serializers.StringRelatedField(
-        queryset=Station.objects.all()
-    )
+    source = serializers.StringRelatedField(queryset=Station.objects.all())
+    destination = serializers.StringRelatedField(queryset=Station.objects.all())
 
     class Meta:
         model = Route
@@ -105,4 +99,47 @@ class RouteSerializer(serializers.ModelSerializer):
             "source",
             "destination",
             "distance"
+        )
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = Order
+        fields = (
+            "id",
+            "created_at",
+            "user"
+        )
+        read_only_fields = ("created_at",)
+
+
+class JourneySerializer(serializers.ModelSerializer):
+    route = RouteSerializer(read_only=True)
+    train = TrainSerializer(read_only=True)
+
+    class Meta:
+        model = Journey
+        fields = (
+            "id",
+            "route",
+            "train",
+            "departure_time",
+            "arrival_time"
+        )
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    journey = JourneySerializer(read_only=True)
+    order = OrderSerializer(read_only=True)
+
+    class Meta:
+        model = Ticket
+        fields = (
+            "id",
+            "cargo",
+            "seat",
+            "journey",
+            "order"
         )
