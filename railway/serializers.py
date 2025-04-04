@@ -143,3 +143,33 @@ class TicketSerializer(serializers.ModelSerializer):
             "journey",
             "order"
         )
+
+
+class TicketListSerializer(serializers.ModelSerializer):
+    journey = serializers.StringRelatedField()
+    order = serializers.StringRelatedField()
+
+    class Meta:
+        model = Ticket
+        fields = (
+            "id",
+            "cargo",
+            "seat",
+            "journey",
+            "order"
+        )
+
+
+class TicketDetailSerializer(serializers.ModelSerializer):
+    journey = JourneySerializer(read_only=True)
+    order = OrderSerializer(read_only=True)
+
+    class Meta:
+        model = Ticket
+        fields = (
+            "id",
+            "cargo",
+            "seat",
+            "journey",
+            "order"
+        )
