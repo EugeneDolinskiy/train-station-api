@@ -22,3 +22,12 @@ class StationSerializer(serializers.ModelSerializer):
             "latitude",
             "longitude"
         )
+
+
+class TrainTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainType
+        fields = (
+            "id",
+            "name"
+        )
