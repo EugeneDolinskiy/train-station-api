@@ -4,12 +4,19 @@ from railway.models import Crew, Station, TrainType, Train
 
 
 class CrewSerializer(serializers.ModelSerializer):
+    journeys = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field="route"
+    )
+
     class Meta:
         model = Crew
         fields = (
             "id",
             "first_name",
-            "last_name"
+            "last_name",
+            "journeys"
         )
 
 
@@ -41,6 +48,19 @@ class TrainSerializer(serializers.ModelSerializer):
             "name",
             "cargo_num",
             "places_in_cargo",
+            "train_type",
+            "image"
+        )
+
+
+class TrainListSerializer(TrainSerializer):
+    train_type = TrainTypeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Train
+        fields = (
+            "id",
+            "name",
             "train_type",
             "image"
         )
