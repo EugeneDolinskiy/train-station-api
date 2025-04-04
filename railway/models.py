@@ -43,7 +43,7 @@ class Train(models.Model):
     name = models.CharField(max_length=255, unique=True)
     cargo_num = models.PositiveIntegerField()
     places_in_cargo = models.PositiveIntegerField()
-    train_type = models.ForeignKey(
+    train_type = models.ManyToManyField(
         TrainType,
         on_delete=models.CASCADE,
         related_name="trains"
