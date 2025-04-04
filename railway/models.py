@@ -17,7 +17,7 @@ class Crew(models.Model):
 
 
 class Station(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     latitude = models.FloatField()
     longitude = models.FloatField()
 
@@ -26,7 +26,7 @@ class Station(models.Model):
 
 
 class TrainType(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
@@ -34,15 +34,15 @@ class TrainType(models.Model):
 
 def train_image_file_path(instance, filename):
     _, extension = os.path.splitext(filename)
-    filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
+    filename = f"{slugify(instance.name)}-{uuid.uuid4()}{extension}"
 
     return os.path.join("uploads/trains/", filename)
 
 
 class Train(models.Model):
-    name = models.CharField(max_length=255)
-    cargo_num = models.IntegerField()
-    places_in_cargo = models.IntegerField()
+    name = models.CharField(max_length=255, unique=True)
+    cargo_num = models.PositiveIntegerField()
+    places_in_cargo = models.PositiveIntegerField()
     train_type = models.ForeignKey(
         TrainType,
         on_delete=models.CASCADE,
@@ -50,6 +50,7 @@ class Train(models.Model):
     )
     image = models.ImageField(
         null=True,
+        blank=True,
         upload_to=train_image_file_path
     )
 
@@ -68,7 +69,11 @@ class Route(models.Model):
         on_delete=models.CASCADE,
         related_name="arriving_routes"
     )
-    distance = models.FloatField()
+    distance = models.FloatField(
+        validators=[
+            MinValueValidator(0)
+        ]
+    )
 
     def __str__(self):
         return f"{self.source.name} -> {self.destination.name} ({round(self.distance, 2)})"
@@ -109,4 +114,27 @@ class Journey(models.Model):
             f"{self.route.source.name} -> {self.route.destination.name} | "
             f"{self.train.name} | {self.departure_time.strftime('%Y-%m-%d %H:%M')} "
             f"– {self.arrival_time.strftime('%Y-%m-%d %H:%M')}"
+        )
+
+
+class Ticket(models.Model):
+    cargo = models.PositiveIntegerField()
+    seat = models.PositiveIntegerField()
+    journey = models.ForeignKey(
+        Journey,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
+
+    def __str__(self):
+        return (
+            f"Ticket for {getattr(self.journey.route.source, 'name', 'Unknown')} -> "
+            f"{getattr(self.journey.route.destination, 'name', 'Unknown')} | "
+            f"Cargo: {self.cargo} | Seat: {self.seat} | "
+            f"Departure: {self.journey.departure_time.strftime('%Y-%m-%d %H:%M') if self.journey else 'N/A'}"
         )
