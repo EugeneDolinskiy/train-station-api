@@ -11,6 +11,10 @@ from rest_framework.exceptions import ValidationError
 class Crew(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    journeys = models.ManyToManyField(
+        "Journey",
+        related_name="crew"
+    )
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
