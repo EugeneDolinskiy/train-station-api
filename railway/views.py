@@ -31,6 +31,7 @@ class StationViewSet(viewsets.ModelViewSet):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
 
+
 class TrainViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
@@ -72,5 +73,9 @@ class TrainViewSet(
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class RouteViewSet(viewsets.ModelViewSet):
+    queryset = Route.objects.all()
+    serializer_class = RouteSerializer
 
 # Create your views here.
