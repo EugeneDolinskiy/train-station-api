@@ -5,26 +5,21 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from railway.models import Crew, Station, Train, Route, Order, Journey, Ticket
-from railway.serializers import (
-    CrewSerializer,
-    StationSerializer,
-    TrainSerializer,
-    TrainListSerializer,
-    TrainDetailSerializer,
-    TrainImageSerializer,
-    RouteSerializer,
-    OrderSerializer,
-    JourneySerializer,
-    TicketSerializer,
-    TicketListSerializer,
-    TicketDetailSerializer
-)
+from railway.models import Crew, Station, Train, Route, Order, Journey, Ticket, TrainType
+from railway.serializers import (CrewSerializer, StationSerializer, TrainSerializer, TrainListSerializer,
+                                 TrainDetailSerializer, TrainImageSerializer, RouteSerializer, OrderSerializer,
+                                 JourneySerializer, TicketSerializer, TicketListSerializer, TicketDetailSerializer,
+                                 TrainTypeSerializer)
 
 
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
+
+
+class TrainTypeViewSet(viewsets.ModelViewSet):
+    queryset = TrainType.objects.all()
+    serializer_class = TrainTypeSerializer
 
 
 class StationViewSet(viewsets.ModelViewSet):
