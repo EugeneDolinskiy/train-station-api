@@ -49,7 +49,6 @@ class Train(models.Model):
     places_in_cargo = models.PositiveIntegerField()
     train_type = models.ManyToManyField(
         TrainType,
-        on_delete=models.CASCADE,
         related_name="trains"
     )
     image = models.ImageField(
