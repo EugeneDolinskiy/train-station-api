@@ -88,8 +88,8 @@ class TrainImageSerializer(serializers.ModelSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
-    source = serializers.StringRelatedField(queryset=Station.objects.all())
-    destination = serializers.StringRelatedField(queryset=Station.objects.all())
+    source = serializers.StringRelatedField()
+    destination = serializers.StringRelatedField()
 
     class Meta:
         model = Route
