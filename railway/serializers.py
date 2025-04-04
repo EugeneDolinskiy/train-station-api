@@ -3,7 +3,6 @@ from railway.models import Crew, Station, TrainType, Train, Route, Order, Journe
 
 
 class CrewSerializer(serializers.ModelSerializer):
-    # Замість 'route' потрібно вказати 'journeys', щоб показати всі поїздки
     journeys = serializers.SlugRelatedField(
         many=True,
         read_only=True,
